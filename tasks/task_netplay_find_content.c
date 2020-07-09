@@ -140,15 +140,28 @@ static void netplay_crc_scan_callback(retro_task_t *task,
       command_event(CMD_EVENT_NETPLAY_INIT_DIRECT, state->hostname);
       command_event(CMD_EVENT_RESUME, NULL);
    }
-   /* no match found */
-   else
-   {
-      RARCH_LOG("[Lobby]: Couldn't find a suitable %s\n",
-         string_is_empty(state->content_path) ? "content file" : "core");
-      runloop_msg_queue_push(
-            msg_hash_to_str(MENU_ENUM_LABEL_VALUE_NETPLAY_LOAD_CONTENT_MANUALLY),
-            1, 480, true,
-            NULL, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
+
+   else {
+       struct retro_system_info *system = runloop_get_libretro_system_info();
+
+       /* connect if we're running the same content and core */
+       if ( state->found && state->current && !state->contentless
+              && string_is_equal(system->library_name, state->core_name)) {
+           RARCH_INFO("[Lobby]: Matching core and content found, connecting without core & content reload\n" );
+           command_event(CMD_EVENT_NETPLAY_INIT_DIRECT, state->hostname);
+           command_event(CMD_EVENT_RESUME, NULL);
+       }
+
+       /* no match found */
+       else
+       {
+           RARCH_LOG("[Lobby]: Couldn't find a suitable %s\n",
+             string_is_empty(state->content_path) ? "content file" : "core");
+           runloop_msg_queue_push(
+                msg_hash_to_str(MENU_ENUM_LABEL_VALUE_NETPLAY_LOAD_CONTENT_MANUALLY),
+                1, 480, true,
+                NULL, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
+        }
    }
 
    free(state);
