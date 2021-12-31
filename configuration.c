@@ -1519,6 +1519,8 @@ static struct config_path_setting *populate_settings_path(
          settings->paths.directory_resampler, false, NULL, true);
    SETTING_PATH("video_shader_dir",
          settings->paths.directory_video_shader, true, NULL, true);
+   SETTING_PATH("video_shader",
+         settings->paths.path_shader, false, NULL, true);
    SETTING_PATH("video_filter_dir",
          settings->paths.directory_video_filter, true, NULL, true);
    SETTING_PATH("core_assets_directory",
@@ -2688,6 +2690,7 @@ void config_set_defaults(void *data)
    *settings->paths.directory_menu_config = '\0';
 #endif
    *settings->paths.directory_video_shader = '\0';
+   *settings->paths.path_shader = '\0';
    *settings->paths.directory_video_filter = '\0';
    *settings->paths.directory_audio_filter = '\0';
 
@@ -4937,6 +4940,10 @@ bool config_save_overrides(enum override_type type, void *data)
 
       for (i = 0; i < (unsigned)path_settings_size; i++)
       {
+         /* blacklist 'video_shader', better handled by shader presets */
+         if (string_is_equal(path_settings[i].ident, "video_shader"))
+             continue;
+
          if (!string_is_equal(path_settings[i].ptr, path_overrides[i].ptr))
             config_set_path(conf, path_overrides[i].ident,
                   path_overrides[i].ptr);
