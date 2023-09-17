@@ -594,6 +594,7 @@ typedef struct settings
       char path_cheat_settings[PATH_MAX_LENGTH];
       char path_font[PATH_MAX_LENGTH];
       char path_rgui_theme_preset[PATH_MAX_LENGTH];
+      char path_shader[PATH_MAX_LENGTH];
       char app_icon[PATH_MAX_LENGTH];
 
       char browse_url[4096];      /* TODO/FIXME - check size */
