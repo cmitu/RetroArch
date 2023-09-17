@@ -2782,9 +2782,10 @@ static bool video_shader_load_shader_preset_internal(
       {
          if (string_is_empty(special_name))
             break;
-
-         fill_pathname_join(s, shader_directory, special_name, len);
-         strlcat(s, video_shader_get_preset_extension(types[i]), len);
+         if (strcmp(special_name, "config")!=0) {
+            fill_pathname_join(s, shader_directory, special_name, len);
+            strlcat(s, video_shader_get_preset_extension(types[i]), len);
+         }
       }
 
       if (path_is_valid(s))
@@ -2888,6 +2889,17 @@ static bool video_shader_load_auto_shader_preset(settings_t *settings, const cha
                sizeof(shader_path),
                dirs[i], NULL,
                "global"))
+         goto success;
+   }
+   /* Configuration file shader found ? */
+   strlcpy(shader_path, settings->paths.path_shader, PATH_MAX_LENGTH);
+   if (!string_is_empty(shader_path)) {
+      RARCH_LOG("[Shaders/RetroPie]: Configuration file shader path found.\n");
+      if(video_shader_load_shader_preset_internal(
+            shader_path,
+            sizeof(shader_path),
+            NULL, NULL,
+            "config"))
          goto success;
    }
    return false;
