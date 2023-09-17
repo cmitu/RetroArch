@@ -1584,6 +1584,7 @@ static struct config_path_setting *populate_settings_path(
    SETTING_PATH("audio_dsp_plugin",              settings->paths.path_audio_dsp_plugin, false, NULL, true);
    SETTING_PATH("audio_filter_dir",              settings->paths.directory_audio_filter, true, NULL, true);
    SETTING_PATH("video_shader_dir",              settings->paths.directory_video_shader, true, NULL, true);
+   SETTING_PATH("video_shader",                  settings->paths.path_shader, false, NULL, true);
    SETTING_PATH("video_filter_dir",              settings->paths.directory_video_filter, true, NULL, true);
    SETTING_PATH("video_filter",                  settings->paths.path_softfilter_plugin, false, NULL, true);
    SETTING_PATH("video_font_path",               settings->paths.path_font, false, NULL, true);
@@ -2962,6 +2963,7 @@ void config_set_defaults(void *data)
    *settings->paths.directory_menu_config = '\0';
 #endif
    *settings->paths.directory_video_shader = '\0';
+   *settings->paths.path_shader            = '\0';
    *settings->paths.directory_video_filter = '\0';
    *settings->paths.directory_audio_filter = '\0';
 
@@ -5180,6 +5182,10 @@ bool config_save_file(const char *path)
    {
       for (i = 0; i < (unsigned)path_settings_size; i++)
       {
+         /* blacklist the 'video_shader' configuration path, better handled by shader presets */
+         if (string_is_equal(path_settings[i].ident, "video_shader"))
+             continue;
+
          const char *value = path_settings[i].ptr;
 
          if (path_settings[i].def_enable && string_is_empty(path_settings[i].ptr))
