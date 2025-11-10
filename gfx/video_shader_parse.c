@@ -2807,10 +2807,11 @@ static bool video_shader_load_shader_preset_internal(
          if (string_is_empty(special_name))
             break;
 
-         _len = fill_pathname_join(s, shader_directory, special_name, len);
-         strlcpy(s + _len, video_shader_get_preset_extension(types[i]), len - _len);
+         if (strcmp(special_name, "config") != 0) {
+           _len = fill_pathname_join(s, shader_directory, special_name, len);
+           strlcpy(s + _len, video_shader_get_preset_extension(types[i]), len - _len);
+         }
       }
-
       if (path_is_valid(s))
          return true;
    }
@@ -2850,6 +2851,7 @@ static size_t video_shader_load_auto_shader_preset(
    const char *rarch_path_basename    = path_get(RARCH_PATH_BASENAME);
    bool has_content                   = !string_is_empty(rarch_path_basename);
 
+   settings_t *settings               = config_get_ptr();
    const char *game_name              = NULL;
    const char *dirs[3]                = {0};
 
@@ -2921,6 +2923,18 @@ static size_t video_shader_load_auto_shader_preset(
                dirs[i], NULL,
                "global"))
          return strlcpy(s, shader_path, len);
+
+       /* Configuration file shader found? */
+       strlcpy(shader_path, settings->paths.path_shader, PATH_MAX_LENGTH);
+       if (!string_is_empty(shader_path)) {
+          RARCH_LOG("[Shaders/RetroPie]: Configuration file shader path found.\n");
+          if(video_shader_load_shader_preset_internal(
+                  shader_path,
+                  sizeof(shader_path),
+                  NULL, NULL,
+                  "config"))
+             return strlcpy(s, shader_path, len);
+        }
    }
 
    return 0;
