@@ -1833,15 +1833,6 @@ static void frontend_unix_get_env(int *argc,
                   break;
             }
 
-            fill_pathname_join(g_defaults.dirs[DEFAULT_DIR_SRAM],
-                  parent_path, "saves",
-                  sizeof(g_defaults.dirs[DEFAULT_DIR_SRAM]));
-            fill_pathname_join(g_defaults.dirs[DEFAULT_DIR_SAVESTATE],
-                  parent_path, "states",
-                  sizeof(g_defaults.dirs[DEFAULT_DIR_SAVESTATE]));
-            fill_pathname_join(g_defaults.dirs[DEFAULT_DIR_SYSTEM],
-                  parent_path, "system",
-                  sizeof(g_defaults.dirs[DEFAULT_DIR_SYSTEM]));
             fill_pathname_join(g_defaults.dirs[DEFAULT_DIR_SCREENSHOT],
                   parent_path, "screenshots",
                   sizeof(g_defaults.dirs[DEFAULT_DIR_SCREENSHOT]));
@@ -2122,17 +2113,6 @@ static void frontend_unix_get_env(int *argc,
          "thumbnails", sizeof(g_defaults.dirs[DEFAULT_DIR_THUMBNAILS]));
    fill_pathname_join(g_defaults.dirs[DEFAULT_DIR_LOGS], base_path,
          "logs", sizeof(g_defaults.dirs[DEFAULT_DIR_LOGS]));
-   fill_pathname_join(g_defaults.dirs[DEFAULT_DIR_SRAM], base_path,
-         "saves", sizeof(g_defaults.dirs[DEFAULT_DIR_SRAM]));
-   fill_pathname_join(g_defaults.dirs[DEFAULT_DIR_SAVESTATE], base_path,
-         "states", sizeof(g_defaults.dirs[DEFAULT_DIR_SAVESTATE]));
-   if (libretro_system_directory && *libretro_system_directory)
-       strlcpy(g_defaults.dirs[DEFAULT_DIR_SYSTEM],
-	       libretro_system_directory,
-	       sizeof(g_defaults.dirs[DEFAULT_DIR_SYSTEM]));
-   else
-       fill_pathname_join(g_defaults.dirs[DEFAULT_DIR_SYSTEM], base_path,
-             "system", sizeof(g_defaults.dirs[DEFAULT_DIR_SYSTEM]));
 #endif
 
 #ifndef IS_SALAMANDER
